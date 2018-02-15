@@ -1,0 +1,26 @@
+{
+  "name": "request-promise",
+  "private": false,
+  "version": "0.0.1",
+  "description": "A Promise-based HTTP(s) request module",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_PATH=. NODE_ENV=test mocha --check-leaks --inline-diffs --throw-deprecation"
+  },
+  "keywords": [
+    "request",
+    "promise",
+    "http"
+  ],
+  "author": "Milo Casagrande <milo@opensourcefoundries.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^4.1.0"
+  },
+  "dependencies": {
+    "debug": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=6"
+  }
+}

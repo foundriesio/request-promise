@@ -1,0 +1,14 @@
+{
+    "curly": true,
+    "esversion" : 6,
+    "globals": {
+        "describe": true,
+        "it": true
+    },
+    "node": true,
+    "quotmark": "single",
+    "strict": false,
+    "undef": true,
+    "unused": true,
+    "varstmt" : true
+}
