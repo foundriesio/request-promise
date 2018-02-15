@@ -1,4 +1,5 @@
 const debug = require('debug')('request-promise');
+const isStream = require('is-stream');
 const zlib = require('zlib');
 
 const agent = require('./lib/agent');
@@ -139,7 +140,11 @@ function _request(http, options, data, Future) {
         });
 
         if (data && HTTP_DATA_METHODS.includes(options.method)) {
-            req.write(data);
+            if (isStream(data)) {
+                data.pipe(req);
+            } else {
+                req.write(data);
+            }
         }
 
         req.end();
