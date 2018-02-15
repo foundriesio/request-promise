@@ -125,6 +125,10 @@ function _request(http, options, data, Future) {
             handleResponse(response, resolve, reject);
         });
 
+        req.on('timeout', () => {
+            req.abort();
+        });
+
         req.on('error', (err) => {
             if (~err.message.indexOf('ECONNREFUSED')) {
                 result = new HTTPConnectionError('Error connecting to remote server');
