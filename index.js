@@ -75,16 +75,18 @@ function handleResponse(response, resolve, reject) {
     });
 
     output.on('end', () => {
-        if (response.statusCode > 300 && response.statusCode <= 310) {
-            result = new HTTPRedirect(response.statusCode);
+        const status = response.statusCode;
+
+        if (status > 300 && status <= 310) {
+            result = new HTTPRedirect('Redirect');
             result.location = response.headers.location;
-        } else if (response.statusCode < 200 || response.statusCode > 310) {
+        } else if (status < 200 || status > 310) {
             result = new HTTPError('HTTP error');
-            result.status = response.statusCode;
         } else {
             result = new HTTPResponse('OK');
-            result.status = response.statusCode;
         }
+
+        result.status = status;
 
         if (hasHeader('content-type', response.headers) &&
                 response.headers['content-type'].includes('json')) {
