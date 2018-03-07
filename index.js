@@ -147,13 +147,19 @@ function _request(http, options, data, Future) {
 
         if (data && HTTP_DATA_METHODS.includes(options.method)) {
             if (isStream(data)) {
-                data.pipe(req);
-            } else {
-                req.write(data);
-            }
-        }
+                data.on('end', () => {
+                    req.end();
+                });
 
-        req.end();
+                data.pipe(req, {end: true});
+            } else {
+                req.write(data, () => {
+                    req.end();
+                });
+            }
+        } else {
+            req.end();
+        }
     });
 }
 
