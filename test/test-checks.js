@@ -1,26 +1,9 @@
 const assert = require('assert');
 
-const {isNull, isObject, isString} = require('../lib/checks');
+const {isObject, isString} = require('../lib/checks');
 
 describe('Test the checks functions', () => {
     process.env.NODE_ENV = 'test';
-
-    it('isNull should always return false', () => {
-        assert.strictEqual(isNull(''), false);
-        assert.strictEqual(isNull('foo'), false);
-        assert.strictEqual(isNull('àèìòùåß∂ƒ∫'), false);
-        assert.strictEqual(isNull(2), false);
-        assert.strictEqual(isNull([]), false);
-        assert.strictEqual(isNull({}), false);
-        assert.strictEqual(isNull(function() {}), false);
-    });
-
-    it('isNull should always return true', () => {
-        assert.strictEqual(isNull(null), true);
-        assert.strictEqual(isNull(undefined), true);
-        assert.strictEqual(isNull([][0]), true);
-        assert.strictEqual(isNull({}.foo), true);
-    });
 
     it('isObject should always return false', () => {
         assert.strictEqual(isObject(''), false);
