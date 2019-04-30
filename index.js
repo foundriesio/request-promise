@@ -94,6 +94,10 @@ function _request({http, options, data, Future}) {
     function _handleRequest(resolve, reject) {
         debug(`${options.method} ${options.hostname}:${options.port}${options.path}`);
 
+        if (data && HTTP_DATA_METHODS.includes(options.method)) {
+            options.headers['Content-Length'] = Buffer.byteLength(data);
+        }
+
         const req = http.request(options);
 
         req.on('response', (response) => {
