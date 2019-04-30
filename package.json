@@ -2,17 +2,22 @@
   "name": "request-promise",
   "private": false,
   "version": "0.1.1",
+  "repository": "github:foundriesio/request-promise",
+  "bugs": "https://github.com/foundriesio/request-promise/issues",
+  "homepage": "https://github.com/foundriesio/request-promise#readme",
   "description": "A Promise-based HTTP(s) request module",
   "main": "index.js",
   "scripts": {
     "test": "NODE_PATH=. NODE_ENV=test mocha --check-leaks --inline-diffs --throw-deprecation"
   },
   "keywords": [
-    "request",
+    "http",
+    "https",
     "promise",
-    "http"
+    "request",
+    "response"
   ],
-  "author": "Milo Casagrande <milo@opensourcefoundries.com>",
+  "author": "Milo Casagrande <milo@foundries.io>",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^4.19.1",
@@ -23,6 +28,6 @@
     "is-stream": "^1.1.0"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">= 8.12.0"
   }
 }
