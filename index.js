@@ -67,16 +67,22 @@ function handleResponse(response, resolve, reject) {
 
             result.status = status;
 
-            if (hasHeader('content-type', response.headers) &&
-                    /json/.test(response.headers['content-type'])) {
-                result.body = JSON.parse(Buffer.concat(data).toString('utf8'));
-            } else {
-                result.body = Buffer.concat(data);
+            try {
+                if (hasHeader('content-type', response.headers) &&
+                        /json/.test(response.headers['content-type'])) {
+                    result.body = JSON.parse(Buffer.concat(data).toString('utf8'));
+                } else {
+                    result.body = Buffer.concat(data);
+                }
+
+                result.headers = response.headers;
+                resolve(result);
+            } catch (ex) {
+                result = new HTTPError(ex.message);
+                result.original = ex;
+
+                reject(result);
             }
-
-            result.headers = response.headers;
-
-            resolve(result);
         });
     });
 }
