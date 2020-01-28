@@ -1,33 +1,37 @@
 {
-    "parserOptions": {
-        "ecmaVersion": 2017
-    },
-    "plugins": [
-        "node",
-        "security",
-        "promise",
-        "import"
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
+  "plugins": [
+    "node",
+    "security",
+    "promise"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:node/recommended",
+    "plugin:security/recommended",
+    "plugin:promise/recommended"
+  ],
+  "env": {
+    "es6": true,
+    "mocha": true,
+    "node": true
+  },
+  "rules": {
+    "linebreak-style": [
+      "error",
+      "unix"
     ],
-    "extends": [
-        "eslint:recommended",
-        "plugin:node/recommended",
-        "plugin:security/recommended",
-        "plugin:promise/recommended",
-        "plugin:import/errors",
-        "plugin:import/warnings"
+    "no-unused-vars": "error",
+    "no-undef": "error",
+    "block-scoped-var": "error",
+    "require-jsdoc": "off",
+    "semi": [
+      "error", "always"
     ],
-    "env": {
-        "es6": true,
-        "mocha": true,
-        "node": true
-    },
-    "rules": {
-        "block-scoped-var": "error",
-        "no-undef": "error",
-        "no-unused-vars": "error",
-        "node/exports-style": ["error", "module.exports"],
-        "quotes": ["error", "single"],
-        "require-jsdoc": "off",
-        "semi": ["error", "always"]
-    }
+    "quotes": [
+      "error", "single"
+    ]
+  }
 }
