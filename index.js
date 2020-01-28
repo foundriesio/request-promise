@@ -21,7 +21,7 @@ const HTTP_DATA_METHODS = [
  * @return {Boolean}         If the header is available and not null.
  */
 function hasHeader(value, headers) {
-    if (headers.hasOwnProperty(value.toLowerCase())) {
+    if (Object.prototype.hasOwnProperty.call(headers, value.toLowerCase())) {
         return true;
     }
     return false;
@@ -53,37 +53,25 @@ function handleResponse(response, resolve, reject) {
     });
 
     output.on('end', () => {
-        setImmediate(() => {
-            const status = response.statusCode;
+        const status = response.statusCode;
 
-            if (status >= 200 && status < 300) {
-                result = new HTTPResponse('OK');
-            } else if (status >= 300 && status <= 310) {
-                result = new HTTPRedirect('Redirect');
-                result.location = response.headers.location;
-            } else {
-                result = new HTTPError('HTTP error');
-            }
+        if (status >= 200 && status < 300) {
+            result = new HTTPResponse('OK');
+        } else if (status >= 300 && status <= 310) {
+            result = new HTTPRedirect('Redirect');
+            result.location = response.headers.location;
+        } else {
+            result = new HTTPError('HTTP error');
+        }
 
-            result.status = status;
+        result.statusCode = response.statusCode;
+        result.httpVersion = response.httpVersion;
+        result.rawHeaders = response.rawHeaders;
+        result.statusMessage = response.statusMessage || 'unknown';
+        result.headers = response.headers;
+        result.body = Buffer.concat(data);
 
-            try {
-                if (hasHeader('content-type', response.headers) &&
-                        /json/.test(response.headers['content-type'])) {
-                    result.body = JSON.parse(Buffer.concat(data).toString('utf8'));
-                } else {
-                    result.body = Buffer.concat(data);
-                }
-
-                result.headers = response.headers;
-                resolve(result);
-            } catch (ex) {
-                result = new HTTPError(ex.message);
-                result.original = ex;
-
-                reject(result);
-            }
-        });
+        resolve(result);
     });
 }
 
@@ -160,7 +148,7 @@ function _request({http, options, data, Future}) {
  * @param  {Object} options Options for the HTTP agent and connection.
  * @return {Promise}
  */
-async function _get(url, options = {}) {
+module.exports.get = async function (url, options = {}) {
     const Future = options.Future || Promise;
 
     async function _inner(url, reqAgent, followed = 0) {
@@ -169,35 +157,37 @@ async function _get(url, options = {}) {
         const follow = reqAgent.followRedirects;
         const maxFollows = reqAgent.maxRedirects;
 
-        const resp = await _request({
-            http: reqAgent.http,
-            options: reqAgent.httpOptions, Future: Future});
+        if (follow) {
+            const resp = await _request({
+                http: reqAgent.http,
+                options: reqAgent.httpOptions, Future: Future
+            });
 
-        if (resp instanceof HTTPResponse) {
-            return resp;
-        } else if (resp instanceof HTTPRedirect && follow) {
-            if (followed < maxFollows) {
+            if (resp instanceof HTTPRedirect) {
+                if (followed >= maxFollows) {
+                    error = new HTTPError(500);
+                    error.message = 'Maximum number of redirects reached';
+                    return Future.reject(error);
+                }
+
                 if (hasHeader('location', resp.headers)) {
                     const [oldUrl, newUrl] = reqAgent.toURLs(
                         url, resp.headers.location);
 
-                    await reqAgent.update(oldUrl, newUrl);
+                    reqAgent.update(oldUrl, newUrl);
 
                     return _inner(newUrl, reqAgent, followed + 1);
-                } else {
-                    error = new HTTPError(400);
-                    error.message = 'Missing Location header';
-                    throw error;
                 }
+            } else if (resp instanceof HTTPResponse) {
+                return Future.resolve(resp);
             } else {
-                error = new HTTPError(500);
-                error.message = 'Maximum number of redirects reached';
-                throw error;
+                return Future.reject(resp);
             }
-        } else if (resp instanceof HTTPRedirect && !follow) {
-            return resp;
         } else {
-            throw resp;
+            return _request({
+                http: reqAgent.http,
+                options: reqAgent.httpOptions, Future: Future
+            });
         }
     }
 
@@ -205,31 +195,28 @@ async function _get(url, options = {}) {
         options.method = 'GET';
     }
 
-    const reqAgent = await agent.create(url, options);
+    const reqAgent = agent.create(url, options);
 
     return _inner(url, reqAgent);
-}
+};
 
-async function _dataRequest(url, data, options) {
+/**
+ *
+ * @param {String} url
+ * @param {Buffer} data
+ * @param {Object} options
+ * @returns {Promise}
+ */
+function _dataRequest(url, data, options) {
     const Future = options.Future || Promise;
 
-    const requestAgent = await agent.create(url, options);
+    const requestAgent = agent.create(url, options);
 
-    try {
-        const resp = await _request({
-            http: requestAgent.http,
-            options: requestAgent.httpOptions,
-            data: data, Future: Future
-        });
-
-        if (resp instanceof HTTPResponse) {
-            return resp;
-        } else {
-            throw resp;
-        }
-    } catch (err) {
-        throw err;
-    }
+    return _request({
+        http: requestAgent.http,
+        options: requestAgent.httpOptions,
+        data: data, Future: Future
+    });
 }
 
 /**
@@ -238,15 +225,15 @@ async function _dataRequest(url, data, options) {
  * @param  {String} url     The URL to connect to.
  * @param  {Buffer} data    The data to send (String or Buffer).
  * @param  {Object} options Options for the HTTP agent and connection.
- * @return {Promise}
+ * @returns {Promise}
  */
-async function _post(url, data, options = {}) {
+module.exports.post = function (url, data, options = {}) {
     if (options.method !== 'POST') {
         options.method = 'POST';
     }
 
     return _dataRequest(url, data, options);
-}
+};
 
 /**
  * Perform a PUT request.
@@ -254,15 +241,15 @@ async function _post(url, data, options = {}) {
  * @param  {String} url     The URL to connect to.
  * @param  {Buffer} data    The data to send (String or Buffer).
  * @param  {Object} options Options for the HTTP agent and connection.
- * @return {Promise}
+ * @returns {Promise}
  */
-async function _put(url, data, options = {}) {
+module.exports.put = function (url, data, options = {}) {
     if (options.method !== 'PUT') {
         options.method = 'PUT';
     }
 
     return _dataRequest(url, data, options);
-}
+};
 
 /**
  * Perform a PATCH request.
@@ -270,54 +257,38 @@ async function _put(url, data, options = {}) {
  * @param  {String} url     The URL to connect to.
  * @param  {Buffer} data    The data to send (String or Buffer).
  * @param  {Object} options Options for the HTTP agent and connection.
- * @return {Promise}
+ * @returns {Promise}
  */
-async function _patch(url, data, options = {}) {
+module.exports.patch = function (url, data, options = {}) {
     if (options.method !== 'PATCH') {
         options.method = 'PATCH';
     }
 
     return _dataRequest(url, data, options);
-}
+};
 
 /**
  * Perform a DELETE request.
  *
  * @param  {String} url     The URL to connect to.
  * @param  {Object} options Options for the HTTP agent and connection.
- * @return {Promise}
+ * @returns {Promise}
  */
-async function _delete(url, options = {}) {
+module.exports.delete = function (url, options = {}) {
     const Future = options.Future || Promise;
 
     if (options.method !== 'DELETE') {
         options.method = 'DELETE';
     }
 
-    const requestAgent = await agent.create(url, options);
+    const requestAgent = agent.create(url, options);
 
-    try {
-        const resp = await _request({
-            http: requestAgent.http,
-            options: requestAgent.httpOptions,
-            Future: Future});
-
-        if (resp instanceof HTTPResponse) {
-            return resp;
-        } else {
-            throw resp;
-        }
-    } catch (err) {
-        throw err;
-    }
-}
-
-module.exports = {
-    get: _get,
-    post: _post,
-    delete: _delete,
-    patch: _patch,
-    put: _put,
-    queryfy: utils.queryfy,
-    errors: require('./lib/errors')
+    return _request({
+        http: requestAgent.http,
+        options: requestAgent.httpOptions,
+        Future: Future
+    });
 };
+
+module.exports.queryfy = utils.queryfy;
+module.exports.errors = require('./lib/errors');
