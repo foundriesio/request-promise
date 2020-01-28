@@ -8,10 +8,14 @@ describe('Test the HTTResponse/HTTPRedirect objects', () => {
     it('Should have a defined set of enumerable properties', () => {
         const expected = [
             'body',
+            'headers',
+            'httpVersion',
             'location',
             'message',
             'name',
-            'status'
+            'rawHeaders',
+            'statusCode',
+            'statusMessage'
         ];
 
         assert.deepStrictEqual(Object.keys(new HTTPResponse()).sort(), expected);
@@ -20,23 +24,23 @@ describe('Test the HTTResponse/HTTPRedirect objects', () => {
     it('Default values should be set (HTTPResponse)', () => {
         const response = new HTTPResponse();
 
-        assert.strictEqual(response.status, 200);
+        assert.strictEqual(response.statusCode, 200);
         assert.strictEqual(response.name, 'HTTP Response');
         assert.strictEqual(response.message, undefined);
-        assert.strictEqual(response.body, undefined);
-        assert.strictEqual(response.location, undefined);
-        assert.strictEqual(response.headers, undefined);
+        assert.strictEqual(response.body, null);
+        assert.strictEqual(response.location, null);
+        assert.strictEqual(response.headers, null);
     });
 
     it('Default values should be set (HTTPRedirect)', () => {
         const response = new HTTPRedirect();
 
-        assert.strictEqual(response.status, 200);
+        assert.strictEqual(response.statusCode, 301);
         assert.strictEqual(response.name, 'HTTP Redirect Response');
         assert.strictEqual(response.message, undefined);
-        assert.strictEqual(response.body, undefined);
-        assert.strictEqual(response.location, undefined);
-        assert.strictEqual(response.headers, undefined);
+        assert.strictEqual(response.body, null);
+        assert.strictEqual(response.location, null);
+        assert.strictEqual(response.headers, null);
     });
 
     it('Should set a different message', () => {
@@ -48,9 +52,9 @@ describe('Test the HTTResponse/HTTPRedirect objects', () => {
 
     it('Should set a different status', () => {
         const response = new HTTPResponse();
-        response.status = 299;
+        response.statusCode = 299;
 
-        assert.equal(response.status, 299);
+        assert.equal(response.statusCode, 299);
     });
 
     it('Should set a different body', () => {
@@ -58,24 +62,6 @@ describe('Test the HTTResponse/HTTPRedirect objects', () => {
         response.body = 'body';
 
         assert.equal(response.body, 'body');
-    });
-
-    it('Headers must be an object', () => {
-        const response = new HTTPResponse();
-
-        assert.throws(() => {
-            response.headers = 'headers';
-        }, TypeError);
-
-        assert.throws(() => {
-            response.headers = () => {
-                return 'headers';
-            };
-        }, TypeError);
-
-        assert.throws(() => {
-            response.headers = ['header'];
-        }, TypeError);
     });
 
     it('Should set different headers', () => {
