@@ -113,11 +113,11 @@ function _request({http, options, data, Future}) {
 
                 if (~err.message.indexOf('ECONNREFUSED')) {
                     result = new HTTPConnectionError('Error connecting to remote server');
-                    result.status = 500;
+                    result.statusCode = 500;
                     result.detail = `Error connecting to ${options.host}`;
                 } else {
                     result = new HTTPError(err.message);
-                    result.status = err.status;
+                    result.statusCode = err.status;
                 }
 
                 result.original = err;
