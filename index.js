@@ -71,6 +71,11 @@ function handleResponse(response, resolve, reject) {
         result.headers = response.headers;
         result.body = Buffer.concat(data);
 
+        if (result instanceof HTTPError) {
+            reject(result);
+            return;
+        }
+
         resolve(result);
     });
 }
