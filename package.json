@@ -1,7 +1,7 @@
 {
   "name": "@foundriesio/request",
   "private": false,
-  "version": "0.2.1",
+  "version": "1.0.0",
   "repository": "github:foundriesio/request-promise",
   "bugs": "https://github.com/foundriesio/request-promise/issues",
   "homepage": "https://github.com/foundriesio/request-promise#readme",
