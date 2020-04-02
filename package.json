@@ -1,5 +1,5 @@
 {
-  "name": "request-promise",
+  "name": "@foundriesio/request",
   "private": false,
   "version": "0.2.1",
   "repository": "github:foundriesio/request-promise",
@@ -10,13 +10,6 @@
   "scripts": {
     "test": "NODE_PATH=. NODE_ENV=test mocha --check-leaks --inline-diffs --throw-deprecation"
   },
-  "keywords": [
-    "http",
-    "https",
-    "promise",
-    "request",
-    "response"
-  ],
   "author": "Milo Casagrande <milo@foundries.io>",
   "license": "MIT",
   "devDependencies": {
