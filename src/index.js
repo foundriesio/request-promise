@@ -5,6 +5,7 @@ import zlib from 'zlib';
 import { createAgent } from './lib/agent';
 import { HTTPError } from './lib/errors';
 import { HTTPResponse, HTTPRedirect } from './lib/response';
+import { queryfy as queryfyFunction } from './lib/queryfy';
 
 // List of HTTP verbs that support sending data.
 const httpDataMethods = ['PATCH', 'POST', 'PUT'];
@@ -296,4 +297,4 @@ export function DELETE(url, options = {}) {
   });
 }
 
-export const queryfy = require('./lib/queryfy');
+export const queryfy = queryfyFunction;
