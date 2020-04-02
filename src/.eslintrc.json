@@ -10,7 +10,6 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:node/recommended",
     "plugin:security/recommended",
     "plugin:promise/recommended"
   ],

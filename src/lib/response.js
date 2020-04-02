@@ -3,7 +3,7 @@
  *
  * Used to provide a wrapper around the response from HTTP request.
  */
-class HTTPResponse {
+export class HTTPResponse {
   constructor(message) {
     this.message = message;
     this.name = 'HTTP Response';
@@ -30,8 +30,10 @@ class HTTPResponse {
   }
 
   contentType() {
-    if (this.headers
-        && Object.prototype.hasOwnProperty.call(this.headers, 'content-type')) {
+    if (
+      this.headers &&
+      Object.prototype.hasOwnProperty.call(this.headers, 'content-type')
+    ) {
       return this.headers['content-type'];
     }
   }
@@ -42,15 +44,10 @@ class HTTPResponse {
  *
  * Used to provide a wrapper for HTTP redirects.
  */
-class HTTPRedirect extends HTTPResponse {
+export class HTTPRedirect extends HTTPResponse {
   constructor(message) {
     super(message);
     this.name = 'HTTP Redirect Response';
     this.statusCode = 301;
   }
 }
-
-module.exports = {
-  HTTPRedirect: HTTPRedirect,
-  HTTPResponse: HTTPResponse
-};

@@ -6,9 +6,21 @@
   "bugs": "https://github.com/foundriesio/request-promise/issues",
   "homepage": "https://github.com/foundriesio/request-promise#readme",
   "description": "A Promise-based HTTP(s) request module",
-  "main": "index.js",
+  "main": "dist/main.js",
+  "files": [
+    "dist/*.js",
+    "LICENSE.md",
+    "package-lock.json",
+    "src"
+  ],
   "scripts": {
-    "test": "NODE_PATH=. NODE_ENV=test mocha --check-leaks --inline-diffs --throw-deprecation"
+    "prebuild": "rimraf dist",
+    "prepare": "npm run build",
+    "build": "NODE_ENV=production webpack --progress",
+    "build:test": "NODE_ENV=test webpack --display none",
+    "lint": "prettier *.md *.js ./src/*.js ./src/**/*.js  --write",
+    "pretest": "npm run build:test",
+    "test": "NODE_PATH=. NODE_ENV=test mocha ./src/test --check-leaks --inline-diffs --throw-deprecation"
   },
   "author": "Milo Casagrande <milo@foundries.io>",
   "license": "Apache-2.0",
