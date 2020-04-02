@@ -1,12 +1,13 @@
 {
   "parserOptions": {
-    "ecmaVersion": 2017
+    "ecmaVersion": 8,
+    "sourceType": "module"
   },
-  "plugins": [
-    "node",
-    "security",
-    "promise"
-  ],
+  "ecmaFeatures": {
+    "modules": true,
+    "spread": true,
+    "restParams": true
+  },
   "extends": [
     "eslint:recommended",
     "plugin:node/recommended",
@@ -15,7 +16,6 @@
   ],
   "env": {
     "es6": true,
-    "mocha": true,
     "node": true
   },
   "rules": {
@@ -28,10 +28,12 @@
     "block-scoped-var": "error",
     "require-jsdoc": "off",
     "semi": [
-      "error", "always"
+      "error",
+      "always"
     ],
     "quotes": [
-      "error", "single"
+      "error",
+      "single"
     ]
   }
 }
