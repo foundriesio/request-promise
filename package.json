@@ -11,7 +11,7 @@
     "test": "NODE_PATH=. NODE_ENV=test mocha --check-leaks --inline-diffs --throw-deprecation"
   },
   "author": "Milo Casagrande <milo@foundries.io>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-plugin-node": "^11.1.0",
