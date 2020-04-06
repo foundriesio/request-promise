@@ -296,4 +296,14 @@ export function DELETE(url, options = {}) {
   });
 }
 
+export const request = {
+  delete: DELETE,
+  get: GET,
+  patch: PATCH,
+  post: POST,
+  put: PUT
+};
+
 export const queryfy = queryfyFunction;
+
+export default request;
