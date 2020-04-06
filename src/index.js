@@ -1,4 +1,3 @@
-import debug from 'debug';
 import isStream from 'is-stream';
 import zlib from 'zlib';
 
@@ -10,7 +9,7 @@ import { queryfy as queryfyFunction } from './lib/queryfy';
 // List of HTTP verbs that support sending data.
 const httpDataMethods = ['PATCH', 'POST', 'PUT'];
 
-debug('request-promise');
+const debug = require('debug')('request-promise');
 
 /**
  * Check if the headers object contains a specific header.
